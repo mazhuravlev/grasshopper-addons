@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GHAddons", "GHAddons.csproj", "{286258C0-1737-4D3A-B90E-6845C89B5561}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug32|x64 = Debug32|x64
+		Debug64|x64 = Debug64|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Debug32|x64.ActiveCfg = Debug32|x64
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Debug32|x64.Build.0 = Debug32|x64
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Debug64|x64.ActiveCfg = Debug64|x64
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Debug64|x64.Build.0 = Debug64|x64
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Release|x64.ActiveCfg = Release|x64
+		{286258C0-1737-4D3A-B90E-6845C89B5561}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB4BA2CB-E0BB-4513-A2EB-1355CF659788}
+	EndGlobalSection
+EndGlobal
