@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GHAddons</RootNamespace>
     <AssemblyName>GHAddons</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
@@ -65,10 +65,8 @@
   <ItemGroup>
     <Compile Include="Components\GateParam.cs" />
     <Compile Include="Components\GateComponent.cs" />
-    <Compile Include="Exceptions\ApiClientException.cs" />
-    <Compile Include="Exceptions\AddonLogicException.cs" />
     <Compile Include="Components\ComponentExtensions.cs" />
-    <Compile Include="ExecutionStatus.cs" />
+    <Compile Include="Components\GateState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

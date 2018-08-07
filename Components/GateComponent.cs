@@ -144,11 +144,4 @@ namespace GHAddons.Components
             ExpireAllOutputs();
         }
     }
-
-    public enum GateState
-    {
-        Closed,
-        Activated,
-        Reset
-    }
 }
