@@ -7,4 +7,4 @@ Passes all values at one time after all inputs were expired
 
 1. Key Lookup component
 Fast Key / Value Search
-![Key Lookup component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/key_lookup.gif)
+![Key Lookup component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/key_lookup.png)
