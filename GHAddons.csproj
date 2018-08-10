@@ -63,6 +63,7 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\KeyLookupComponent.cs" />
     <Compile Include="Components\GateButtonComponent.cs" />
     <Compile Include="Components\GateParam.cs" />
     <Compile Include="Components\GateComponent.cs" />
