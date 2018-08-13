@@ -55,6 +55,7 @@
     <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="RhinoCommon, Version=5.1.30000.17, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>packages\GrasshopperDll.1.0.0\lib\RhinoCommon.dll</HintPath>
       <Private>False</Private>
@@ -67,8 +68,11 @@
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\ClickablePreviewComponent.cs" />
+    <Compile Include="Components\Feedback.cs" />
     <Compile Include="Components\ReplaceMembersComponent.cs" />
     <Compile Include="Components\MemberIndexComponent.cs" />
     <Compile Include="Components\StorageComponent.cs" />
