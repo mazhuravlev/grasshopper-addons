@@ -12,3 +12,7 @@ Fast Key / Value Search
 1. Member Index component
 Fast Member Index
 ![Member Index component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/member_index.png)
+
+1. Replace Member component
+Fast Replace Member
+![Member Index component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/replace_member.png)
