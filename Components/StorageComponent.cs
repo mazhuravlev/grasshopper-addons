@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Grasshopper.Kernel;
 using LiteDB;
 
@@ -9,7 +11,7 @@ namespace GHAddons.Components
     // ReSharper disable once ClassNeverInstantiated.Global
     public class StorageComponent : GH_Component
     {
-        private int _in;
+        private string _dbPath;
         private int _pathIn;
 
         public StorageComponent()
@@ -19,12 +21,96 @@ namespace GHAddons.Components
 
         public override Guid ComponentGuid => new Guid("1a1d1f12-61ab-49d3-b977-37dc65a13333");
 
+        public delegate void StorageChangedHandler(object sender, StorageChangedEventArgs e);
+        public event StorageChangedHandler OnStorageChanged;
+
+        public void SetString(string key, string value)
+        {
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentException("Key is null or empty");
+            }
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                var kv = collection.Find(x => x.Key == key).FirstOrDefault();
+                if (kv == null)
+                {
+                    collection.Insert(new KeyValue { Key = key, Value = value });
+                }
+                else
+                {
+                    kv.Value = value;
+                    collection.Update(kv);
+                }
+            }
+            OnStorageChanged?.Invoke(this, new StorageChangedEventArgs { Key = key, Value = value });
+        }
+
+        public void SetStrings(List<string> keys, List<string> values)
+        {
+            if (keys.Count != values.Count)
+            {
+                throw new ArgumentException($"{nameof(keys)}.Count != {nameof(values)}.Count");
+            }
+
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                var existingKeyValues = collection.Find(x => keys.Contains(x.Key)).ToDictionary(x => x.Key, x => x);
+                var toInsert = new List<KeyValue>();
+                var toUpdate = new List<KeyValue>();
+                foreach (var (key, value) in keys.Zip(values, (k, v) => (k, v)))
+                {
+                    if (string.IsNullOrEmpty(key))
+                    {
+                        throw new ArgumentException("Key is null or empty");
+                    }
+
+                    if (existingKeyValues.ContainsKey(key))
+                    {
+                        var kv = existingKeyValues[key];
+                        kv.Value = value;
+                        toUpdate.Add(kv);
+                    }
+                    else
+                    {
+                        toInsert.Add(new KeyValue { Key = key, Value = value });
+                    }
+                   
+                    OnStorageChanged?.Invoke(this, new StorageChangedEventArgs { Key = key, Value = value });
+                }
+
+                collection.InsertBulk(toInsert);
+                collection.Update(toUpdate);
+            }
+        }
+
+        public string GetString(string key)
+        {
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                var kv = collection.Find(x => x.Key == key).FirstOrDefault();
+                return kv?.Value;
+            }
+        }
+
+        public IEnumerable<string> GetStrings(IEnumerable<string> keys)
+        {
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                var kv = collection.Find(x => keys.Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value);
+                return keys.Select(x => kv.ContainsKey(x) ? kv[x] : null);
+            }
+        }
+
         protected override Bitmap Icon => new Bitmap(24, 24);
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
         {
-            _in = pManager.AddBooleanParameter("Button", "B", "Button input", GH_ParamAccess.item);
-            _pathIn = pManager.AddTextParameter("Db path", "DB", "Path to db file", GH_ParamAccess.item);
+            _pathIn = pManager.AddTextParameter("DB Path", "DB", "DB Path", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_OutputParamManager pManager)
@@ -35,49 +121,28 @@ namespace GHAddons.Components
         {
             var dbPath = string.Empty;
             da.GetData(_pathIn, ref dbPath);
-            using(var db = new LiteDatabase(dbPath))
-            {
-                // Get customer collection
-                var customers = db.GetCollection<Customer>("customers");
-
-                // Create your new customer instance
-                var customer = new Customer
-                { 
-                    Name = "John Doe", 
-                    Phones = new string[] { "8000-0000", "9000-0000" }, 
-                    IsActive = true
-                };
-
-                // Insert new customer document (Id will be auto-incremented)
-                customers.Insert(customer);
-
-                // Update a document inside a collection
-                customer.Name = "Joana Doe";
-
-                customers.Update(customer);
-
-                // Index document using a document property
-                customers.EnsureIndex(x => x.Name);
-
-                // Use Linq to query documents
-                var results = customers.Find(x => x.Name.StartsWith("Jo"));
-            }  
+            _dbPath = dbPath;
         }
 
         protected override void ExpireDownStreamObjects()
         {
             //
         }
-
-     
     }
 
-    public class Customer
+    public class KeyValue
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string[] Phones { get; set; }
-        public bool IsActive { get; set; }
+
+        public string Key { get; set; }
+
+        public string Value { get; set; }
     }
 
+    public class StorageChangedEventArgs
+    {
+        public string Key { get; set; }
+
+        public string Value { get; set; }
+    }
 }

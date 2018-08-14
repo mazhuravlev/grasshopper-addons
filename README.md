@@ -22,3 +22,7 @@ Replace Member component
 Clickable Preview component
 ------
 ![Member Index component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/clickable_preview.gif)
+
+Key Value Storage Component
+------
+Database with update notifications

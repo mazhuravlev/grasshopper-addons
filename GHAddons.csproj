@@ -75,6 +75,8 @@
     <Compile Include="Components\Feedback.cs" />
     <Compile Include="Components\ReplaceMembersComponent.cs" />
     <Compile Include="Components\MemberIndexComponent.cs" />
+    <Compile Include="Components\ReaderComponent.cs" />
+    <Compile Include="Components\WriterComponent.cs" />
     <Compile Include="Components\StorageComponent.cs" />
     <Compile Include="Components\KeyLookupComponent.cs" />
     <Compile Include="Components\GateButtonComponent.cs" />
