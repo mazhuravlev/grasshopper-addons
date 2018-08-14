@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
@@ -66,46 +67,42 @@ namespace GHAddons.Components
 
         protected override void SolveInstance(IGH_DataAccess da)
         {
-            var flag = false;
-            var meshList = new List<Mesh>();
-            // ISSUE: cast to a reference type
-            if (!da.GetData("Enable", ref flag) || !da.GetDataList("Meshes", meshList))
-                return;
-            EnabledGlobal = flag;
-            var selectedMeshes = ShiftPressed ? _selectedIndices.Select(x => meshList[x]).ToList() : new List<Mesh>();
-            var intersectParams = new List<double>();
-            var selectedIndices = new List<int>();
-            if (!MouseLine.HasValue)
+            var meshes = new List<Mesh>();
+            da.GetData("Enable", ref EnabledGlobal);
+            da.GetDataList("Meshes", meshes);          
+            if (!MouseLine.HasValue) return;
+            var intersectParams = meshes.Select((x, i) => (i, IntersectMeshWithMouseRay(x))).ToList();
+            var clickedIndex = intersectParams.Where(x => x.Item2 >= 0).OrderByDescending(x => x.Item2).Select(x => (int?)x.Item1).FirstOrDefault();
+            if (MultiselectActive)
             {
-                return;
-            }
-
-            var meshesToIntersect = meshList.Where(x => !selectedMeshes.Contains(x)).ToList();
-            Debug.Assert(meshesToIntersect.Count + selectedMeshes.Count == meshList.Count);
-            foreach (var mesh in meshesToIntersect)
-            {
-                var line = MouseLine.Value;
-                var @from = line.From;
-                var to = line.To;
-                var vector3D = to - @from;
-                var ray3D = new Ray3d(@from, vector3D);
-                var num = Intersection.MeshRay(mesh, ray3D);
-                // ReSharper disable once InvertIf
-                if (num >= 0.0)
+                if (clickedIndex.HasValue)
                 {
-                    intersectParams.Add(num);
-                    selectedMeshes.Add(mesh);
+                    var clickedIndexValue = clickedIndex.Value;
+                    _selectedIndices = _selectedIndices.Contains(clickedIndexValue) ? _selectedIndices.Where(x => x != clickedIndexValue).ToList() : _selectedIndices.Concat(new[] { clickedIndexValue }).ToList();
                 }
             }
-            var selectedSet = new HashSet<Mesh>(selectedMeshes);
-            selectedIndices = meshList.Select((x, i) => selectedSet.Contains(x) ? i : -1).Where(x => x >= 0).ToList();
+            else
+            {
+                _selectedIndices = clickedIndex.HasValue ? new List<int>{clickedIndex.Value} : new List<int>();
+            }
 
-            //var ghStructure = new GH_Structure<GH_Line>();
-            // ghStructure.Append(new GH_Line(MouseLine.Value));
-            //da.SetDataTree(2, (IGH_Structure)ghStructure);
-            da.SetDataList(_selectedMeshesOut, selectedMeshes);
-            da.SetDataList(_selectedIndicesOut, selectedIndices);
-            _selectedIndices = selectedIndices;
+            da.SetDataList(_selectedMeshesOut, _selectedIndices.Where(x => x < meshes.Count).Select(x => meshes[x]));
+            da.SetDataList(_selectedIndicesOut, _selectedIndices);
+        }
+
+        // ReSharper disable once MemberCanBeMadeStatic.Local
+        private bool MultiselectActive => Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+
+        private double IntersectMeshWithMouseRay(Mesh mesh)
+        {
+            Debug.Assert(MouseLine != null, nameof(MouseLine) + " != null");
+            var line = MouseLine.Value;
+            var @from = line.From;
+            var to = line.To;
+            var vector3D = to - @from;
+            var ray3D = new Ray3d(@from, vector3D);
+            var num = Intersection.MeshRay(mesh, ray3D);
+            return num;
         }
 
         private void ObjectsDeleted(object sender, GH_DocObjectEventArgs e)
@@ -121,6 +118,5 @@ namespace GHAddons.Components
         protected override Bitmap Icon => new Bitmap(24, 24);
 
         public override Guid ComponentGuid => new Guid("5be96ccb-eaa5-4c0e-a09a-95973ba08ef5");
-        public bool ShiftPressed { get; set; } = false;
     }
 }

@@ -32,7 +32,6 @@ namespace GHAddons.Components
             if (e.Button == MouseButtons.Left && _cm != null && (_cm.EnabledGlobal && _cm.InActiveDocument) && GetForegroundWindow() == RhinoApp.MainWindowHandle())
             {
                 _cm.MouseLine = e.View.ActiveViewport.ClientToWorld(e.ViewportPoint);
-                _cm.ShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
                 _cm.ExpireSolution(true);
                 e.Cancel = true;
             }

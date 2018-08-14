@@ -18,3 +18,7 @@ Member Index component
 Replace Member component
 ------
 ![Member Index component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/replace_member.png)
+
+Clickable Preview component
+------
+![Member Index component](https://raw.githubusercontent.com/mazhuravlev/grasshopper-addons/master/Img/clickable_preview.gif)
