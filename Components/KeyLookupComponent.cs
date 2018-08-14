@@ -55,14 +55,25 @@ namespace GHAddons.Components
             var dict = new Dictionary<string, object>();
             for (var i = 0; i < keys.Count; i++)
             {
-                if(dict.ContainsKey(keys[i])) continue;
-                dict[keys[i]] = values[i];
+                var key = keys[i];
+                if(key == null) continue;
+                if (dict.ContainsKey(key)) continue;
+                dict[key] = values[i];
             }
 
             var result = new object[search.Count];
             for (var i = 0; i < search.Count; i++)
             {
-                result[i] = dict[search[i]];
+                var searchKey = search[i];
+                if (dict.ContainsKey(searchKey))
+                {
+                    result[i] = dict[searchKey];
+                }
+                else
+                {
+                    result[i] = null;
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, $"Search key [{searchKey}] not found");
+                }
             }
             da.SetDataList(_valuesOut, result);
         }
