@@ -93,6 +93,8 @@
   <ItemGroup>
     <Compile Include="Components\ClickablePreviewComponent.cs" />
     <Compile Include="Components\CustomAssemblyPriority.cs" />
+    <Compile Include="Components\DeletorComponent.cs" />
+    <Compile Include="Components\KeysComponent.cs" />
     <Compile Include="Components\UserHistoryComponent.cs" />
     <Compile Include="Components\UserHistoryWidget.cs" />
     <Compile Include="Components\Feedback.cs" />

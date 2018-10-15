@@ -47,7 +47,8 @@ namespace GHAddons.Components
                 for (var i = 0; i < branchGeometries.Count; i++)
                 {
                     var ghGeometricGoo = branchGeometries[i];
-                    var transformedGeometry = ghGeometricGoo.Transform(branchTransforms[i].Value);
+                    var transform = branchTransforms[i].Value;
+                    var transformedGeometry = ghGeometricGoo.Transform(transform);
                     result.Add(transformedGeometry, ghPath);
                 }
             }

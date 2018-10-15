@@ -7,6 +7,8 @@ using LiteDB;
 
 namespace GHAddons.Components
 {
+    using System.Collections;
+
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once ClassNeverInstantiated.Global
     public class StorageComponent : GH_Component
@@ -106,6 +108,15 @@ namespace GHAddons.Components
             }
         }
 
+        public void DeleteKeys(IEnumerable<string> keys)
+        {
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                collection.Delete(x => keys.Contains(x.Key));
+            }
+        }
+
         protected override Bitmap Icon => new Bitmap(24, 24);
 
         protected override void RegisterInputParams(GH_InputParamManager pManager)
@@ -127,6 +138,15 @@ namespace GHAddons.Components
         protected override void ExpireDownStreamObjects()
         {
             //
+        }
+
+        public IEnumerable<string> SearchKeys(string search)
+        {
+            using (var db = new LiteDatabase(_dbPath))
+            {
+                var collection = db.GetCollection<KeyValue>();
+                return collection.Find(x => x.Key.StartsWith(search)).Select(x => x.Key).ToList();
+            }
         }
     }
 
