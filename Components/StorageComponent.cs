@@ -7,9 +7,7 @@ using LiteDB;
 
 namespace GHAddons.Components
 {
-    using System.Collections;
     using Grasshopper.Kernel.Special;
-    using Grasshopper.Kernel.Types;
 
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once ClassNeverInstantiated.Global
@@ -129,18 +127,26 @@ namespace GHAddons.Components
 
         private LiteDatabase GetDb()
         {
-            if (!string.IsNullOrEmpty(_dbPath))
+            LiteDatabase LiteDatabase()
             {
-                return new LiteDatabase(_dbPath);
+                if (!string.IsNullOrEmpty(_dbPath))
+                {
+                    return new LiteDatabase(_dbPath);
+                }
+
+                var panel = Params.Input[_pathIn].Sources.FirstOrDefault() as GH_Panel;
+                if (panel == null)
+                {
+                    throw new Exception("Db path not set");
+                }
+
+                return new LiteDatabase(panel.UserText);
             }
 
-            var panel = Params.Input[_pathIn].Sources.FirstOrDefault() as GH_Panel;
-            if (panel == null)
-            {
-                throw new Exception("Db path not set");
-            }
-
-            return new LiteDatabase(panel.UserText);
+            var db = LiteDatabase();
+            var collection = db.GetCollection<KeyValue>();
+            collection.EnsureIndex(x => x.Key);
+            return db;
         }
 
         protected override Bitmap Icon => new Bitmap(24, 24);
