@@ -44,19 +44,9 @@ namespace GHAddons.Components
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "There must be exactly 1 Storage Component in document");
                 return;
             }
-            storage.OnStorageChanged -= StorageChanged;
-            storage.OnStorageChanged += StorageChanged;
             storage.DeleteKeys(_keys);
         }
         
-        private void StorageChanged(object sender, StorageChangedEventArgs e)
-        {
-            if (_keys.Contains(e.Key))
-            {
-                ExpireSolution(true);
-            }
-        }
-
         protected override void ExpireDownStreamObjects()
         {
             //
